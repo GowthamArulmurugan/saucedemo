@@ -1,0 +1,2 @@
+# Tests will import `{ test, expect }` from `../src/fixtures/test-fixtures`.
+# Spec files (TC01, TC02, …) will be added in the next iteration.
