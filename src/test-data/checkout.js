@@ -1,10 +1,4 @@
-export interface CheckoutCustomer {
-  firstName: string;
-  lastName: string;
-  postalCode: string;
-}
-
-export const checkoutCustomers = {
+const checkoutCustomers = {
   valid: {
     firstName: 'Gowtham',
     lastName: 'A',
@@ -25,18 +19,26 @@ export const checkoutCustomers = {
     lastName: 'User',
     postalCode: '',
   },
-} as const satisfies Record<string, CheckoutCustomer>;
+};
 
-export const checkoutValidationMessages = {
+const checkoutValidationMessages = {
   firstName: 'Error: First Name is required',
   lastName: 'Error: Last Name is required',
   postalCode: 'Error: Postal Code is required',
-} as const;
+};
 
-export const lockedOutLoginMessage =
+const lockedOutLoginMessage =
   'Epic sadface: Sorry, this user has been locked out.';
 
-export const invalidLoginMessage =
+const invalidLoginMessage =
   'Epic sadface: Username and password do not match any user in this service';
 
-export const orderCompleteHeader = 'Thank you for your order!';
+const orderCompleteHeader = 'Thank you for your order!';
+
+module.exports = {
+  checkoutCustomers,
+  checkoutValidationMessages,
+  lockedOutLoginMessage,
+  invalidLoginMessage,
+  orderCompleteHeader,
+};

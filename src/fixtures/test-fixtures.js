@@ -1,23 +1,13 @@
-import { test as base, expect } from '@playwright/test';
-import { SauceDemoFlows } from '../common/SauceDemoFlows';
-import {
+const { test: base, expect } = require('@playwright/test');
+const { SauceDemoFlows } = require('../common/SauceDemoFlows');
+const {
+  LoginPage,
+  InventoryPage,
   CartPage,
   CheckoutPage,
-  InventoryPage,
-  LoginPage,
-} from '../pages';
+} = require('../pages');
 
-type SauceFixtures = {
-  loginPage: LoginPage;
-  inventoryPage: InventoryPage;
-  cartPage: CartPage;
-  checkoutPage: CheckoutPage;
-  flows: SauceDemoFlows;
-  /** Fresh login as standard_user before each test that uses this fixture. */
-  authenticatedStandardUser: void;
-};
-
-export const test = base.extend<SauceFixtures>({
+const test = base.extend({
   loginPage: async ({ page }, use) => {
     await use(new LoginPage(page));
   },
@@ -49,4 +39,4 @@ export const test = base.extend<SauceFixtures>({
   ],
 });
 
-export { expect };
+module.exports = { test, expect };

@@ -1,12 +1,5 @@
-/**
- * Traceability: A1 manual case ID → automation status (tests added in a follow-up commit).
- */
-export const manualCaseAutomationMap: Array<{
-  manualId: string;
-  title: string;
-  automate: 'Yes' | 'No';
-  automatedTestName: string;
-}> = [
+/** A1 manual case ID → automation status (specs added in a follow-up commit). */
+const manualCaseAutomationMap = [
   {
     manualId: 'TC01',
     title: 'Standard user logs in successfully',
@@ -80,3 +73,5 @@ export const manualCaseAutomationMap: Array<{
     automatedTestName: 'TC18 — pending',
   },
 ];
+
+module.exports = { manualCaseAutomationMap };

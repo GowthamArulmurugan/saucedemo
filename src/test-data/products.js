@@ -1,11 +1,5 @@
-export interface ProductCatalogItem {
-  name: string;
-  slug: string;
-  price: number;
-}
-
-/** Inventory items on Sauce Demo (prices for assertions in sort/checkout tests). */
-export const products = {
+/** Inventory items on Sauce Demo (slugs match MCP-verified add-to-cart data-test values). */
+const products = {
   backpack: {
     name: 'Sauce Labs Backpack',
     slug: 'sauce-labs-backpack',
@@ -36,15 +30,13 @@ export const products = {
     slug: 'test.allthethings()-t-shirt-(red)',
     price: 15.99,
   },
-} as const satisfies Record<string, ProductCatalogItem>;
+};
 
-export type ProductKey = keyof typeof products;
-
-export const sortOptions = {
+const sortOptions = {
   nameAsc: { label: 'Name (A to Z)', value: 'az' },
   nameDesc: { label: 'Name (Z to A)', value: 'za' },
   priceLowHigh: { label: 'Price (low to high)', value: 'lohi' },
   priceHighLow: { label: 'Price (high to low)', value: 'hilo' },
-} as const;
+};
 
-export type SortOptionKey = keyof typeof sortOptions;
+module.exports = { products, sortOptions };

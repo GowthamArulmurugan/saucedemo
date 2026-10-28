@@ -1,22 +1,7 @@
-export type SauceUserKey =
-  | 'standard'
-  | 'lockedOut'
-  | 'problem'
-  | 'performanceGlitch'
-  | 'error'
-  | 'visual';
-
-export interface SauceUser {
-  key: SauceUserKey;
-  username: string;
-  password: string;
-  description: string;
-}
-
 const sharedPassword = 'secret_sauce';
 
 /** Test users listed on the Sauce Demo login page. */
-export const users: Record<SauceUserKey, SauceUser> = {
+const users = {
   standard: {
     key: 'standard',
     username: 'standard_user',
@@ -55,7 +40,9 @@ export const users: Record<SauceUserKey, SauceUser> = {
   },
 };
 
-export const invalidCredentials = {
+const invalidCredentials = {
   username: users.standard.username,
   password: 'wrong_password',
-} as const;
+};
+
+module.exports = { users, invalidCredentials };

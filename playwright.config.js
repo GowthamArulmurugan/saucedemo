@@ -1,12 +1,11 @@
-import { defineConfig, devices } from '@playwright/test';
-import dotenv from 'dotenv';
-
-dotenv.config();
+// @ts-check
+const { defineConfig, devices } = require('@playwright/test');
+require('dotenv').config();
 
 const baseURL = process.env.BASE_URL ?? 'https://www.saucedemo.com';
 const headed = (process.env.HEADED ?? 'true').toLowerCase() === 'true';
 
-export default defineConfig({
+module.exports = defineConfig({
   testDir: './tests',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,

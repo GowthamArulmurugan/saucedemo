@@ -1,8 +1,10 @@
-# Sauce Demo automation — Harvee QA assessment (Section A2)
+# Sauce Demo automation
 
-Playwright + TypeScript UI tests for [Sauce Demo](https://www.saucedemo.com/), aligned with the manual suite in `../assessment/A1_Manual_Test_Suite.xlsx`.
+JavaScript Playwright UI tests for [Sauce Demo](https://www.saucedemo.com/), aligned with the manual suite in `../assessment/A1_Manual_Test_Suite.xlsx`.
 
-**Status:** Page objects, shared flows, fixtures, and test data are in place. Executable specs (`TC01` …) will be added next.
+**Status:** Page objects, locators, shared flows, fixtures, and test data are in place. Executable specs (`TC01` …) will be added next.
+
+**Language:** JavaScript (CommonJS). Locators live in one module and were checked on the live site with Playwright MCP.
 
 ## Prerequisites
 
@@ -15,7 +17,7 @@ Playwright + TypeScript UI tests for [Sauce Demo](https://www.saucedemo.com/), a
 cd saucedemo
 npm install
 npx playwright install chromium
-cp .env.example .env
+copy .env.example .env
 ```
 
 Environment variables (see `.env.example`):
@@ -24,7 +26,7 @@ Environment variables (see `.env.example`):
 |----------|---------|---------|
 | `BASE_URL` | Application under test | `https://www.saucedemo.com` |
 | `HEADED` | `true` = visible browser (local default) | `true` |
-| `SAUCE_STANDARD_USER` | Override standard username | from `src/test-data/users.ts` |
+| `SAUCE_STANDARD_USER` | Override standard username | from `src/test-data/users.js` |
 | `SAUCE_PASSWORD` | Shared password | `secret_sauce` |
 
 ## Run tests
@@ -39,26 +41,43 @@ Reports (assessment requirement):
 
 - HTML: `playwright-report/`
 - JUnit XML: `test-results/junit.xml`
-- Screenshots: captured **only on failure** (`screenshot: 'only-on-failure'`)
+- Screenshots: **only on failure** (`screenshot: 'only-on-failure'`)
 
 ## Project layout
 
 ```
+playwright.config.js
 src/
-  config/environment.ts     # env-backed settings (no hard-coded URLs in tests)
-  test-data/                # users, products, checkout messages, manual-case map
-  pages/                    # Page Object Model (locators stay out of spec files)
-  common/SauceDemoFlows.ts  # reusable login / cart / checkout flows
-  fixtures/test-fixtures.ts # extended test + page/fixture wiring
+  locators/locators.js      # single source of selectors (MCP-verified on Sauce Demo)
+  config/environment.js     # env-backed settings
+  test-data/                # users.js, products.js, checkout.js, manual-case-map.js
+  pages/                    # Page Object Model — methods only, no selectors in tests
+  common/SauceDemoFlows.js  # reusable login / cart / checkout flows
+  fixtures/test-fixtures.js # extended test + page/fixture wiring
 tests/                      # TC## specs (next step)
 ```
+
+## Locators (Playwright MCP)
+
+All page objects import selectors from `src/locators/locators.js`. Do not duplicate selectors in spec files.
+
+| Area | Key selectors |
+|------|----------------|
+| Login | `[data-test="username"]`, `[data-test="password"]`, `[data-test="login-button"]`, `[data-test="error"]` |
+| Inventory | `[data-test="product-sort-container"]`, `[data-test="shopping-cart-link"]`, `.inventory_item_name`, `.inventory_item_price`, `.shopping_cart_badge` |
+| Cart | `[data-test="checkout"]`, `.cart_item` |
+| Checkout step 1 | `[data-test="firstName"]`, `[data-test="lastName"]`, `[data-test="postalCode"]`, `[data-test="continue"]`, `[data-test="cancel"]` |
+| Checkout step 2 | `[data-test="finish"]`, `.summary_subtotal_label`, `.summary_tax_label`, `.summary_total_label` |
+| Complete | `.complete-header`, `[data-test="back-to-products"]` |
+| Menu | `#react-burger-menu-btn`, `#logout_sidebar_link` |
+| Add to cart | `[data-test="add-to-cart-{slug}"]` — slugs in `productCartSlugs` inside `locators.js` |
 
 ## Writing specs (next step)
 
 Import the custom fixture — not `@playwright/test` directly:
 
-```typescript
-import { test, expect } from '../src/fixtures/test-fixtures';
+```javascript
+const { test, expect } = require('../src/fixtures/test-fixtures');
 
 test('TC01 standard user logs in', async ({ flows, inventoryPage }) => {
   await flows.loginAsStandardUser();
@@ -66,7 +85,7 @@ test('TC01 standard user logs in', async ({ flows, inventoryPage }) => {
 });
 ```
 
-Use `test.use({ authenticatedStandardUser: true })` or call `flows.loginAsStandardUser()` inside the test so each case stays independent.
+Each test should log in or set up its own state so cases stay independent and order-free.
 
 ## Manual case → automation map
 
@@ -86,8 +105,8 @@ Use `test.use({ authenticatedStandardUser: true })` or call `flows.loginAsStanda
 | TC18 | Yes | pending |
 | TC04–TC05, TC12–TC13, TC16–TC17, TC19–TC23 | No | manual only |
 
-Source of truth for titles: `src/test-data/manual-case-map.ts`.
+Source of truth for titles: `src/test-data/manual-case-map.js`.
 
 ## Growing to ~200 tests
 
-Start from the 11 automated manual cases, then add data-driven variants (each sort × each user type allowed, cart combinations, checkout boundary data), contract tests if an API layer exists, and visual snapshots for `visual_user`. Keep POM and `SauceDemoFlows` as the only place new UI steps are added; specs stay thin and tagged by manual ID prefix (`TC07 …`).
+Extend the 11 automated manual cases with data-driven variants (sort × product combinations, checkout boundaries, user personas), API checks if a backend exists, and visual baselines for `visual_user`. Add new UI steps only in `src/pages/` or `SauceDemoFlows.js`; keep specs thin and name tests with the manual ID prefix (`TC07 …`).
