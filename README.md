@@ -2,7 +2,7 @@
 
 JavaScript Playwright UI tests for [Sauce Demo](https://www.saucedemo.com/), aligned with the manual suite in `../assessment/A1_Manual_Test_Suite.xlsx`.
 
-**Status:** Page objects, locators, shared flows, fixtures, and test data are in place. Executable specs (`TC01` …) will be added next.
+**Status:** 12 automated tests (A1 cases marked Automate = Yes), mapped to manual IDs `TC01`–`TC18`.
 
 **Language:** JavaScript (CommonJS). Locators live in one module and were checked on the live site with Playwright MCP.
 
@@ -54,8 +54,20 @@ src/
   pages/                    # Page Object Model — methods only, no selectors in tests
   common/SauceDemoFlows.js  # reusable login / cart / checkout flows
   fixtures/test-fixtures.js # extended test + page/fixture wiring
-tests/                      # TC## specs (next step)
+tests/                      # login, sort, cart, checkout, security specs
 ```
+
+## Test specs
+
+| File | Manual IDs |
+|------|------------|
+| `tests/login.spec.js` | TC01, TC02, TC03 |
+| `tests/inventory-sort.spec.js` | TC06, TC07, TC08, TC09 |
+| `tests/cart.spec.js` | TC10, TC11 |
+| `tests/checkout.spec.js` | TC14, TC15 |
+| `tests/security.spec.js` | TC18 |
+
+Section A2 minimum (8 tests) is covered; all eleven A1 “Automate = Yes” cases are implemented (12 including sort/name variants).
 
 ## Locators (Playwright MCP)
 
@@ -72,41 +84,23 @@ All page objects import selectors from `src/locators/locators.js`. Do not duplic
 | Menu | `#react-burger-menu-btn`, `#logout_sidebar_link` |
 | Add to cart | `[data-test="add-to-cart-{slug}"]` — slugs in `productCartSlugs` inside `locators.js` |
 
-## Writing specs (next step)
-
-Import the custom fixture — not `@playwright/test` directly:
-
-```javascript
-const { test, expect } = require('../src/fixtures/test-fixtures');
-
-test('TC01 standard user logs in', async ({ flows, inventoryPage }) => {
-  await flows.loginAsStandardUser();
-  await inventoryPage.expectLoaded();
-});
-```
-
-Each test should log in or set up its own state so cases stay independent and order-free.
-
 ## Manual case → automation map
 
 | Manual ID | Automate (A1) | Automated test |
 |-----------|---------------|----------------|
-| TC01 | Yes | pending |
-| TC02 | Yes | pending |
-| TC03 | Yes | pending |
-| TC06 | Yes | pending |
-| TC07 | Yes | pending |
-| TC08 | Yes | pending |
-| TC09 | Yes | pending |
-| TC10 | Yes | pending |
-| TC11 | Yes | pending |
-| TC14 | Yes | pending |
-| TC15 | Yes | pending |
-| TC18 | Yes | pending |
+| TC01 | Yes | `TC01 standard user logs in and sees products` |
+| TC02 | Yes | `TC02 locked-out user sees lockout error` |
+| TC03 | Yes | `TC03 invalid password shows credential error` |
+| TC06 | Yes | `TC06 sort by name A to Z orders full product list` |
+| TC07 | Yes | `TC07 sort by price low to high orders full price list` |
+| TC08 | Yes | `TC08 sort by name Z to A orders full product list` |
+| TC09 | Yes | `TC09 sort by price high to low orders full price list` |
+| TC10 | Yes | `TC10 add one product updates cart badge to 1` |
+| TC11 | Yes | `TC11 add two products remove one updates badge and cart contents` |
+| TC14 | Yes | `TC14 complete checkout validates totals and empties cart` |
+| TC15 | Yes | `TC15 checkout required field validation` (parameterized steps) |
+| TC18 | Yes | `TC18 guest cannot open inventory after logout or without session` |
 | TC04–TC05, TC12–TC13, TC16–TC17, TC19–TC23 | No | manual only |
 
-Source of truth for titles: `src/test-data/manual-case-map.js`.
+## Source of truth for titles: `src/test-data/manual-case-map.js`.
 
-## Growing to ~200 tests
-
-Extend the 11 automated manual cases with data-driven variants (sort × product combinations, checkout boundaries, user personas), API checks if a backend exists, and visual baselines for `visual_user`. Add new UI steps only in `src/pages/` or `SauceDemoFlows.js`; keep specs thin and name tests with the manual ID prefix (`TC07 …`).

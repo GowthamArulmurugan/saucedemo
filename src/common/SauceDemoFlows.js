@@ -64,6 +64,10 @@ class SauceDemoFlows {
     await this.page.context().clearCookies();
     await this.page.goto(path);
   }
+
+  async logoutFromApplication() {
+    await this.inventoryPage.logout();
+  }
 }
 
 module.exports = { SauceDemoFlows };

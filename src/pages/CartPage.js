@@ -48,6 +48,17 @@ class CartPage extends BasePage {
     }
     await expect(this.cartBadge()).toHaveText(String(count));
   }
+
+  /** @param {Array<keyof typeof products>} productKeys */
+  async expectCartContainsProducts(productKeys) {
+    await expect(this.cartItems()).toHaveCount(productKeys.length);
+    for (const key of productKeys) {
+      const name = products[key].name;
+      await expect(
+        this.page.locator(this.selectors.cartItem).filter({ hasText: name }),
+      ).toHaveCount(1);
+    }
+  }
 }
 
 module.exports = { CartPage };

@@ -44,6 +44,10 @@ class LoginPage extends BasePage {
   async expectOnLoginPage() {
     await expect(this.loginButton()).toBeVisible();
   }
+
+  async expectCannotBrowseProducts() {
+    await expect(this.page.locator('[data-test="product-sort-container"]')).toHaveCount(0);
+  }
 }
 
 module.exports = { LoginPage };
